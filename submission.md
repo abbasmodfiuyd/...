@@ -45,7 +45,7 @@ Output:
 
 ## DockerHub
 - Repository: abbasmodfiuyd/todo-saas
-- Tags: 0.1.0, latest
+- Tags: 0.1.0, latest, 0.2.0
 - Screenshot: DockerHub showing tags.
 
 Command output:
@@ -63,5 +63,86 @@ docker push abbasmodfiuyd/todo-saas:latest
   - Implemented search by title and description
   - Added filters and sorting for tasks
 
+## CI/CD Assignment
+
+### CI Workflow (ci.yml)
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Lint
+        run: flake8 . --count --max-line-length=120 --statistics
+
+      - name: Run tests
+        run: pytest tests/ -v
+```
+
+- Screenshot of successful CI run: (User needs to provide)
+- Screenshot of failed CI run: (Introduce error, e.g., add a long line, push, then fix)
+
+### CD Workflow (cd.yml)
+```yaml
+name: CD
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract version
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/todo-saas:${{ steps.version.outputs.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/todo-saas:latest
+```
+
+- Screenshot of successful CD run: (User needs to provide)
+- Screenshot of DockerHub showing new image tag (0.2.0): (User needs to provide)
+- Screenshot of GitHub Release v0.2.0: (User needs to provide)
+
+### End-to-End Flow
+I made a small change by adding a comment to app.py, pushed to dev (triggering CI), merged to main via simulated PR, then created a new release v0.2.0 which triggered the CD workflow to build and push the Docker image.
+
 ## What I Learned
-Using Git branching workflows helps maintain clean history and safe feature integration. Pull Requests allow for code review and conflict resolution. Semantic versioning ensures clear version management. Docker containerization simplifies deployment.
+Using Git branching workflows helps maintain clean history and safe feature integration. Pull Requests allow for code review and conflict resolution. Semantic versioning ensures clear version management. Docker containerization simplifies deployment. GitHub Actions automate CI/CD, ensuring code quality and seamless deployment on releases.
