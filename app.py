@@ -17,8 +17,12 @@ def index():
 @app.route('/add', methods=['POST'])
 def add_task():
     title = request.form.get('title')
+    description = request.form.get('description')
+    priority = int(request.form.get('priority', 1))
+    due_date_str = request.form.get('due_date')
+    due_date = datetime.fromisoformat(due_date_str) if due_date_str else None
     if title:
-        task = Task(title=title)
+        task = Task(title=title, description=description, priority=priority, due_date=due_date)
         db.session.add(task)
         db.session.commit()
     return redirect(url_for('index'))

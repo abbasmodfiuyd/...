@@ -7,12 +7,26 @@
 <body>
     <h1>ToDo List</h1>
     <form action="{{ url_for('add_task') }}" method="post">
-        <input type="text" name="title" placeholder="New task" required>
+        <input type="text" name="title" placeholder="Task title" required>
+        <textarea name="description" placeholder="Description"></textarea>
+        <select name="priority">
+            <option value="1">Low</option>
+            <option value="2">Medium</option>
+            <option value="3">High</option>
+        </select>
+        <input type="datetime-local" name="due_date">
         <button type="submit">Add</button>
     </form>
     <ul>
         {% for task in tasks %}
-        <li>{{ task.title }} <a href="{{ url_for('delete_task', task_id=task.id) }}">Delete</a></li>
+        <li>
+            <strong>{{ task.title }}</strong><br>
+            Description: {{ task.description or 'None' }}<br>
+            Priority: {{ 'Low' if task.priority == 1 else 'Medium' if task.priority == 2 else 'High' }}<br>
+            Due: {{ task.due_date.strftime('%Y-%m-%d %H:%M') if task.due_date else 'None' }}<br>
+            Status: {{ task.status }}<br>
+            <a href="{{ url_for('delete_task', task_id=task.id) }}">Delete</a>
+        </li>
         {% endfor %}
     </ul>
 </body>
