@@ -9,6 +9,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
 
+# CI/CD demo comment
+
 @app.route('/')
 def index():
     q = request.args.get('q', '')
