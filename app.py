@@ -11,8 +11,14 @@ migrate = Migrate(app, db)
 
 @app.route('/')
 def index():
-    tasks = Task.query.all()
-    return render_template('index.html', tasks=tasks)
+    q = request.args.get('q', '')
+    tasks_query = Task.query
+    if q:
+        tasks_query = tasks_query.filter(
+            db.or_(Task.title.contains(q), Task.description.contains(q))
+        )
+    tasks = tasks_query.all()
+    return render_template('index.html', tasks=tasks, q=q)
 
 @app.route('/add', methods=['POST'])
 def add_task():
