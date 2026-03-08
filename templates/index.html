@@ -8,7 +8,31 @@
     <h1>ToDo List</h1>
     <form action="{{ url_for('index') }}" method="get">
         <input type="text" name="q" placeholder="Search tasks..." value="{{ q }}">
-        <button type="submit">Search</button>
+        <select name="status">
+            <option value="">All Status</option>
+            <option value="todo" {% if status_filter == 'todo' %}selected{% endif %}>Todo</option>
+            <option value="doing" {% if status_filter == 'doing' %}selected{% endif %}>Doing</option>
+            <option value="done" {% if status_filter == 'done' %}selected{% endif %}>Done</option>
+        </select>
+        <select name="priority">
+            <option value="">All Priority</option>
+            <option value="1" {% if priority_filter == '1' %}selected{% endif %}>Low</option>
+            <option value="2" {% if priority_filter == '2' %}selected{% endif %}>Medium</option>
+            <option value="3" {% if priority_filter == '3' %}selected{% endif %}>High</option>
+        </select>
+        <select name="due">
+            <option value="">All Due</option>
+            <option value="overdue" {% if due_filter == 'overdue' %}selected{% endif %}>Overdue</option>
+            <option value="today" {% if due_filter == 'today' %}selected{% endif %}>Today</option>
+            <option value="this_week" {% if due_filter == 'this_week' %}selected{% endif %}>This Week</option>
+        </select>
+        <select name="sort">
+            <option value="created_at" {% if sort_by == 'created_at' %}selected{% endif %}>Created Date</option>
+            <option value="due_date" {% if sort_by == 'due_date' %}selected{% endif %}>Due Date</option>
+            <option value="priority" {% if sort_by == 'priority' %}selected{% endif %}>Priority</option>
+            <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Title</option>
+        </select>
+        <button type="submit">Filter & Sort</button>
     </form>
     <form action="{{ url_for('add_task') }}" method="post">
         <input type="text" name="title" placeholder="Task title" required>
